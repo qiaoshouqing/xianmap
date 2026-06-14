@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-router'
 import MapPage from './pages/MapPage'
 import KaoPage from './pages/KaoPage'
+import { LocaleProvider } from './i18n'
 import './index.css'
 
 const rootRoute = createRootRoute({ component: () => <Outlet /> })
@@ -20,6 +21,8 @@ declare module '@tanstack/react-router' {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <LocaleProvider>
+      <RouterProvider router={router} />
+    </LocaleProvider>
   </StrictMode>,
 )

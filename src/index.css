@@ -222,6 +222,71 @@ body {
 }
 .title-link:hover { color: var(--cinnabar-deep); border-bottom-color: var(--cinnabar-deep); }
 
+/* ── 语言切换器（顶部居中） ── */
+.lang {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+}
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  background:
+    var(--silk-noise),
+    linear-gradient(168deg, rgba(250, 246, 236, 0.96), rgba(240, 229, 200, 0.96));
+  border: 1px solid var(--hairline);
+  outline: 1px solid rgba(158, 59, 44, 0.2);
+  outline-offset: 2px;
+  border-radius: 3px;
+  color: var(--ink);
+  font-family: var(--font-xi);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(42, 36, 27, 0.16);
+  transition: transform 0.15s;
+}
+.lang-btn:hover { transform: translateY(-1px); }
+.lang-globe { color: var(--cinnabar); font-size: 12px; }
+.lang-menu {
+  list-style: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 132px;
+  padding: 5px;
+  background:
+    var(--silk-noise),
+    linear-gradient(168deg, #fbf7ee, #f0e5c8);
+  border: 1px solid var(--hairline);
+  outline: 1px solid rgba(158, 59, 44, 0.2);
+  outline-offset: 2px;
+  border-radius: 3px;
+  box-shadow: 0 14px 34px rgba(42, 36, 27, 0.28);
+}
+.lang-item {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 7px 10px;
+  background: none;
+  border: none;
+  border-radius: 2px;
+  font-family: var(--font-xi);
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.lang-item:hover { background: rgba(158, 59, 44, 0.08); color: var(--ink); }
+.lang-item.active { background: var(--cinnabar); color: var(--silk); }
+
 /* ── 时空滑杆（底部） ── */
 .dock {
   position: absolute;
@@ -706,4 +771,8 @@ body {
   .tang-label-market { font-size: 15px; }
 
   .kao-paper { padding: 30px 24px; }
+
+  /* 顶部一行已被题签与滑杆占据，语言切换器下移一行 */
+  .lang { top: 62px; }
+  .lang-btn { padding: 5px 11px; font-size: 12px; }
 }

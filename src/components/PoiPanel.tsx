@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { POIS } from '../data/changan'
 import type { Poi } from '../data/changan'
+import { useLocale, tr } from '../i18n'
 
 interface Props {
   onSelect: (poi: Poi) => void
@@ -9,17 +10,18 @@ interface Props {
 
 export default function PoiPanel({ onSelect, selectedId }: Props) {
   const [open, setOpen] = useState(true)
+  const { locale, t } = useLocale()
 
   return (
     <aside className={`poi-panel ${open ? 'open' : 'closed'}`}>
       <button className="poi-toggle" onClick={() => setOpen(!open)} aria-expanded={open}>
-        <span className="poi-toggle-text">{open ? '收起' : '古今寻迹'}</span>
+        <span className="poi-toggle-text">{open ? t.panelCollapse : t.panelTitle}</span>
         <span className="poi-toggle-arrow">{open ? '›' : '‹'}</span>
       </button>
       <div className="poi-scroll">
         <header className="poi-header">
-          <h2>古今寻迹</h2>
-          <p>十六处可亲身抵达的长安</p>
+          <h2>{t.panelTitle}</h2>
+          <p>{t.panelSubtitle}</p>
         </header>
         <ul className="poi-list">
           {POIS.map(p => (
@@ -29,21 +31,19 @@ export default function PoiPanel({ onSelect, selectedId }: Props) {
                 onClick={() => onSelect(p)}
               >
                 <div className="poi-now">
-                  <span className="poi-tag poi-tag-now">今</span>
-                  <span className="poi-name">{p.name}</span>
+                  <span className="poi-tag poi-tag-now">{t.tagNow}</span>
+                  <span className="poi-name">{tr(p.name, locale)}</span>
                 </div>
                 <div className="poi-then">
-                  <span className="poi-tag poi-tag-tang">唐</span>
-                  <span className="poi-tangname">{p.tangName}</span>
+                  <span className="poi-tag poi-tag-tang">{t.tagTang}</span>
+                  <span className="poi-tangname">{tr(p.tangName, locale)}</span>
                 </div>
-                <p className="poi-blurb">{p.modern}</p>
+                <p className="poi-blurb">{tr(p.modern, locale)}</p>
               </button>
             </li>
           ))}
         </ul>
-        <footer className="poi-footer">
-          点击地图任意一处，可知它在唐代的坊名
-        </footer>
+        <footer className="poi-footer">{t.panelFooter}</footer>
       </div>
     </aside>
   )

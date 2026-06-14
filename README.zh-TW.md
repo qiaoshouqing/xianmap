@@ -6,6 +6,8 @@
 
 拖動一枚開元通寶銅錢，在「今日西安」與「大唐長安」之間穿越一千三百年。
 
+### 🌐 線上體驗 — **[changan.pomodiary.com](https://changan.pomodiary.com/)**
+
 [English](README.md) · [简体中文](README.zh-CN.md) · 繁體中文 · [日本語](README.ja.md) · [한국어](README.ko.md)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-9e3b2c.svg)](./LICENSE)

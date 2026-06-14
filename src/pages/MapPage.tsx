@@ -3,11 +3,14 @@ import { Link } from '@tanstack/react-router'
 import MapView from '../components/MapView'
 import ControlDock from '../components/ControlDock'
 import PoiPanel from '../components/PoiPanel'
+import LangSwitcher from '../components/LangSwitcher'
 import type { Poi } from '../data/changan'
+import { useLocale } from '../i18n'
 
 export default function MapPage() {
   const [t, setT] = useState(0.55)
   const [poi, setPoi] = useState<Poi | null>(null)
+  const { t: s } = useLocale()
   const [introDismissed, setIntroDismissed] = useState(
     () => localStorage.getItem('changan-intro') === '1',
   )
@@ -21,15 +24,17 @@ export default function MapPage() {
     <div className="map-page">
       <MapView t={t} flyToPoi={poi} />
 
-      {/* 题签 */}
+      {/* 题签（汉字题签为标志，保留） */}
       <header className="title-card">
         <div className="title-seal">長安<br />輿圖</div>
         <div className="title-text">
           <h1>長安 · 西安</h1>
-          <p>一千三百年，两座城，叠于一图</p>
+          <p>{s.subtitle}</p>
         </div>
-        <Link to="/kao" className="title-link">舆图考</Link>
+        <Link to="/kao" className="title-link">{s.sourcesLink}</Link>
       </header>
+
+      <LangSwitcher />
 
       <PoiPanel onSelect={p => setPoi({ ...p })} selectedId={poi?.id ?? null} />
       <ControlDock t={t} onChange={setT} />
@@ -39,17 +44,14 @@ export default function MapPage() {
         <div className="intro-veil" onClick={dismissIntro}>
           <div className="intro-card" onClick={e => e.stopPropagation()}>
             <div className="intro-seal">遊</div>
-            <h2>欢迎来到长安</h2>
-            <p>
-              这张图把<strong>唐代长安城</strong>按真实坐标叠在<strong>今日西安</strong>的街道上——
-              一百一十坊、东西两市、三大内，皆考之于《长安志》《唐六典》。
-            </p>
+            <h2>{s.introTitle}</h2>
+            <p>{s.introBody}</p>
             <ul>
-              <li><b>拖动下方铜钱滑杆</b>，在今与唐之间穿越</li>
-              <li><b>点击地图任意处</b>，看你脚下是唐代哪一坊</li>
-              <li><b>右侧「古今寻迹」</b>，是十六处今天仍能抵达的长安</li>
+              {s.introList.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
             </ul>
-            <button className="intro-btn" onClick={dismissIntro}>入 城</button>
+            <button className="intro-btn" onClick={dismissIntro}>{s.introBtn}</button>
           </div>
         </div>
       )}

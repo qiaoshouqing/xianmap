@@ -4,9 +4,11 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import {
   CENTER, locateInTang, tangLabels, silkGeo, wardsGeo, palacesGeo,
   marketsGeo, marketStreetsGeo, waterGeo, gardensGeo, wallsGeo, gatesGeo,
-  sitesGeo, canalsGeo, mingWallGeo, POIS,
+  sitesGeo, canalsGeo, mingWallGeo, POIS, TANG_SITES,
 } from '../data/changan'
 import type { Poi } from '../data/changan'
+import { useLocale, tr, type Locale } from '../i18n'
+import type { UIStrings } from '../i18n/ui'
 
 interface Props {
   t: number // 0 = 今, 1 = 唐
@@ -34,37 +36,60 @@ const MAX_OPACITY: Record<string, number> = {
   'ming-wall': 0.8, // 唐图越浓，越需要"今"的参照
 }
 
-function poiPopupHtml(p: Poi): string {
+const esc = (str: string) =>
+  str.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!))
+
+function poiPopupHtml(p: Poi, locale: Locale, s: UIStrings): string {
   return `
     <div class="tang-popup">
       <div class="tang-popup-head">
         <span class="tang-popup-seal">迹</span>
         <div>
-          <div class="tang-popup-eyebrow">今 · ${p.name}</div>
-          <div class="tang-popup-title">唐 · ${p.tangName}</div>
+          <div class="tang-popup-eyebrow">${esc(s.popNowPrefix + tr(p.name, locale))}</div>
+          <div class="tang-popup-title">${esc(s.popTangPrefix + tr(p.tangName, locale))}</div>
         </div>
       </div>
-      <p class="tang-popup-text">${p.tang}</p>
+      <p class="tang-popup-text">${esc(tr(p.tang, locale))}</p>
     </div>`
 }
 
-function popupHtml(lngLat: maplibregl.LngLat): string {
-  const loc = locateInTang(lngLat.lng, lngLat.lat)
-  const zoneTag: Record<string, string> = {
-    ward: '坊', palace: '宫', market: '市', water: '水', garden: '苑',
-    street: '街', imperial: '城', outside: '郊',
-  }
+// TangLocation.zone → UI.zoneTag 键
+const ZONE_KEY: Record<string, string> = {
+  ward: 'ward', palace: 'palace', market: 'market', water: 'water',
+  garden: 'garden', street: 'street', imperial: 'city', outside: 'outskirts',
+}
+
+function popupHtml(lngLat: maplibregl.LngLat, locale: Locale, s: UIStrings): string {
+  const loc = locateInTang(lngLat.lng, lngLat.lat, locale)
+  const tag = s.zoneTag[ZONE_KEY[loc.zone]] ?? ''
   return `
     <div class="tang-popup">
       <div class="tang-popup-head">
-        <span class="tang-popup-seal">${zoneTag[loc.zone]}</span>
+        <span class="tang-popup-seal">${esc(tag)}</span>
         <div>
-          <div class="tang-popup-eyebrow">此地，唐时在</div>
-          <div class="tang-popup-title">${loc.title}</div>
+          <div class="tang-popup-eyebrow">${esc(s.popLocatedEyebrow)}</div>
+          <div class="tang-popup-title">${esc(loc.title)}</div>
         </div>
       </div>
-      ${loc.detail ? `<p class="tang-popup-text">${loc.detail}</p>` : ''}
-      ${loc.story ? `<p class="tang-popup-text"><span class="tang-popup-dian">典</span>${loc.story}</p>` : ''}
+      ${loc.detail ? `<p class="tang-popup-text">${esc(loc.detail)}</p>` : ''}
+      ${loc.story ? `<p class="tang-popup-text"><span class="tang-popup-dian">${esc(s.popLore)}</span>${esc(loc.story)}</p>` : ''}
+    </div>`
+}
+
+function sitePopupHtml(name: string, locale: Locale, s: UIStrings): string {
+  const site = TANG_SITES.find(x => x.name === name)
+  const title = site ? tr(site.title, locale) : name
+  const note = site ? tr(site.note, locale) : ''
+  return `
+    <div class="tang-popup">
+      <div class="tang-popup-head">
+        <span class="tang-popup-seal">迹</span>
+        <div>
+          <div class="tang-popup-eyebrow">${esc(s.popSiteEyebrow)}</div>
+          <div class="tang-popup-title">${esc(title)}</div>
+        </div>
+      </div>
+      <p class="tang-popup-text">${esc(note)}</p>
     </div>`
 }
 
@@ -73,6 +98,14 @@ export default function MapView({ t, flyToPoi, onMapReady }: Props) {
   const mapRef = useRef<maplibregl.Map | null>(null)
   const labelRootRef = useRef<HTMLDivElement | null>(null)
   const tRef = useRef(t)
+  const { locale, t: s } = useLocale()
+  // 事件回调在地图初始化时一次性注册，用 ref 读取最新语言
+  const localeRef = useRef(locale)
+  const sRef = useRef(s)
+  useEffect(() => {
+    localeRef.current = locale
+    sRef.current = s
+  }, [locale, s])
 
   // 初始化
   useEffect(() => {
@@ -242,23 +275,23 @@ export default function MapView({ t, flyToPoi, onMapReady }: Props) {
         new maplibregl.Marker({ element: wrap, anchor }).setLngLat([l.lng, l.lat]).addTo(map)
       }
 
-      // ── 景点常驻标记（今可亲访，不随唐图淡出） ──
+      // ── 景点常驻标记（今可亲访，不随唐图淡出；图钉名保留汉字） ──
       for (const p of POIS) {
         const wrap = document.createElement('div')
         const el = document.createElement('button')
         el.className = 'poi-marker'
-        el.setAttribute('aria-label', p.name)
+        el.setAttribute('aria-label', tr(p.name, localeRef.current))
         const dot = document.createElement('span')
         dot.className = 'poi-marker-dot'
         const name = document.createElement('span')
         name.className = 'poi-marker-name tang-label-zoomgate'
         name.dataset.minzoom = '12.8'
-        name.textContent = p.name
+        name.textContent = p.nameZh
         el.append(dot, name)
         el.addEventListener('click', ev => {
           ev.stopPropagation()
           new maplibregl.Popup({ closeButton: true, maxWidth: '320px', className: 'tang-popup-wrap' })
-            .setLngLat([p.lng, p.lat]).setHTML(poiPopupHtml(p)).addTo(map)
+            .setLngLat([p.lng, p.lat]).setHTML(poiPopupHtml(p, localeRef.current, sRef.current)).addTo(map)
         })
         wrap.appendChild(el)
         new maplibregl.Marker({ element: wrap, anchor: 'top' }).setLngLat([p.lng, p.lat]).addTo(map)
@@ -278,31 +311,22 @@ export default function MapView({ t, flyToPoi, onMapReady }: Props) {
       map.on('click', e => {
         const sites = map.queryRenderedFeatures(e.point, { layers: ['tang-sites'] })
         if (sites.length && tRef.current > 0.05) {
-          const { name, note } = sites[0].properties as { name: string; note: string }
-          const html = `
-            <div class="tang-popup">
-              <div class="tang-popup-head">
-                <span class="tang-popup-seal">迹</span>
-                <div>
-                  <div class="tang-popup-eyebrow">唐迹 · 今已不存</div>
-                  <div class="tang-popup-title">${name}</div>
-                </div>
-              </div>
-              <p class="tang-popup-text">${note}</p>
-            </div>`
+          const name = (sites[0].properties as { name: string }).name
           new maplibregl.Popup({ closeButton: true, maxWidth: '300px', className: 'tang-popup-wrap' })
-            .setLngLat(e.lngLat).setHTML(html).addTo(map)
+            .setLngLat(e.lngLat)
+            .setHTML(sitePopupHtml(name, localeRef.current, sRef.current))
+            .addTo(map)
           return
         }
         new maplibregl.Popup({ closeButton: true, maxWidth: '300px', className: 'tang-popup-wrap' })
           .setLngLat(e.lngLat)
-          .setHTML(popupHtml(e.lngLat))
+          .setHTML(popupHtml(e.lngLat, localeRef.current, sRef.current))
           .addTo(map)
       })
       geolocate.on('geolocate', pos => {
         const ll = new maplibregl.LngLat(pos.coords.longitude, pos.coords.latitude)
         new maplibregl.Popup({ closeButton: true, maxWidth: '300px', className: 'tang-popup-wrap' })
-          .setLngLat(ll).setHTML(popupHtml(ll)).addTo(map)
+          .setLngLat(ll).setHTML(popupHtml(ll, localeRef.current, sRef.current)).addTo(map)
       })
 
       // hover 高亮坊
@@ -342,7 +366,9 @@ export default function MapView({ t, flyToPoi, onMapReady }: Props) {
     if (!map || !flyToPoi) return
     map.flyTo({ center: [flyToPoi.lng, flyToPoi.lat], zoom: 14.6, duration: 1600, essential: true })
     new maplibregl.Popup({ closeButton: true, maxWidth: '320px', className: 'tang-popup-wrap' })
-      .setLngLat([flyToPoi.lng, flyToPoi.lat]).setHTML(poiPopupHtml(flyToPoi)).addTo(map)
+      .setLngLat([flyToPoi.lng, flyToPoi.lat])
+      .setHTML(poiPopupHtml(flyToPoi, localeRef.current, sRef.current))
+      .addTo(map)
   }, [flyToPoi])
 
   return <div ref={containerRef} className="map-container" />
