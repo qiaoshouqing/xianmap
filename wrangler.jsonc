@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "changan-map",
+  "compatibility_date": "2026-06-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+
+  // 默认部署到 https://<worker-name>.<your-subdomain>.workers.dev，开箱即用。
+  //
+  // 如需绑定自有域名，取消下面注释并改成你自己的域名
+  //（该域名所在的 zone 必须已托管在你的 Cloudflare 账号下）：
+  //
+  // "routes": [
+  //   { "pattern": "changan.example.com", "custom_domain": true }
+  // ]
+}

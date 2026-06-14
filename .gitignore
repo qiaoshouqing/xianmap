@@ -1,0 +1,33 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Claude Code / 本地编辑器与运行配置（含本机绝对路径，不入库）
+.claude/
+
+# Cloudflare Wrangler 本地缓存与状态
+.wrangler/
+
+# 个人内容：公众号草稿等，不随仓库公开
+article.md
