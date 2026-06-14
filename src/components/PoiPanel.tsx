@@ -9,15 +9,13 @@ interface Props {
 }
 
 export default function PoiPanel({ onSelect, selectedId }: Props) {
-  const [open, setOpen] = useState(true)
+  // 桌面默认展开（侧栏），移动端默认收起（仅留把手，地图留白）
+  const [open, setOpen] = useState(() => window.innerWidth > 900)
   const { locale, t } = useLocale()
 
   return (
     <aside className={`poi-panel ${open ? 'open' : 'closed'}`}>
-      <button className="poi-toggle" onClick={() => setOpen(!open)} aria-expanded={open}>
-        <span className="poi-toggle-text">{open ? t.panelCollapse : t.panelTitle}</span>
-        <span className="poi-toggle-arrow">{open ? '›' : '‹'}</span>
-      </button>
+      {/* 列表（桌面在上方滚动区；移动端从把手上方展开） */}
       <div className="poi-scroll">
         <header className="poi-header">
           <h2>{t.panelTitle}</h2>
@@ -45,6 +43,12 @@ export default function PoiPanel({ onSelect, selectedId }: Props) {
         </ul>
         <footer className="poi-footer">{t.panelFooter}</footer>
       </div>
+
+      {/* 把手 / 标题栏 */}
+      <button className="poi-toggle" onClick={() => setOpen(!open)} aria-expanded={open}>
+        <span className="poi-toggle-text">{t.panelTitle}</span>
+        <span className="poi-toggle-arrow" aria-hidden>{open ? '›' : '‹'}</span>
+      </button>
     </aside>
   )
 }

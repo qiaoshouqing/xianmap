@@ -175,6 +175,7 @@ body {
   display: flex;
   align-items: stretch;
   gap: 12px;
+  max-width: 360px; /* 限宽，避免与顶部居中的语言切换器相撞 */
   padding: 12px 16px 12px 12px;
   background:
     var(--silk-noise),
@@ -718,61 +719,145 @@ body {
   background: rgba(250, 246, 236, 0.8) !important;
 }
 
-/* ── 移动端 ── */
-@media (max-width: 760px) {
-  .title-card { top: 12px; left: 12px; right: auto; padding: 8px 12px 8px 8px; gap: 8px; }
-  .title-seal { font-size: 11px; padding: 4px 5px; }
-  .title-text h1 { font-size: 19px; }
-  .title-text p { font-size: 10px; }
-  .title-link { font-size: 11px; }
-
-  .poi-panel {
-    top: auto;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 42dvh;
+/* ── 移动端 / 平板竖屏（≤900px，含 iPad 竖屏）──
+   设计原则：做减法。顶部去盒子（印章+落款浮于图上），
+   底部把"时空滑杆 + 古今寻迹"合并为同一块面板——
+   窄滑杆常驻底边，景点列表自其上方展开。整屏只剩"上轻、下一块"。*/
+@media (max-width: 900px) {
+  /* ① 题签：去卡片，仅印章 + 落款浮于图上 */
+  .title-card {
+    top: max(11px, env(safe-area-inset-top));
+    left: 12px;
+    right: auto;
+    gap: 8px;
+    padding: 0;
+    background: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    align-items: center;
   }
-  .poi-panel.closed { transform: translateY(42dvh); }
-  .poi-toggle {
-    left: 50%;
-    top: -34px;
-    transform: translateX(-50%);
-    width: 128px;
-    padding: 7px 0;
-    flex-direction: row;
-    justify-content: center;
-    border-radius: 8px 8px 0 0;
+  .title-seal { font-size: 10px; line-height: 1.1; padding: 4px 5px; }
+  .title-text h1 {
+    font-size: 18px;
+    text-shadow: 0 1px 3px rgba(250, 246, 236, 0.95), 0 0 9px rgba(250, 246, 236, 0.8);
+  }
+  .title-text p { display: none; }
+  .title-link {
+    align-self: center;
+    margin-left: 2px;
+    font-size: 11px;
+    padding: 3px 8px;
     border: 1px solid var(--hairline);
-    border-bottom: none;
-    box-shadow: 0 -6px 16px rgba(42, 36, 27, 0.15);
+    border-radius: 3px;
+    background: rgba(250, 246, 236, 0.82);
   }
-  .poi-toggle-text { writing-mode: horizontal-tb; letter-spacing: 0.2em; }
-  .poi-toggle-arrow { display: none; }
-  .poi-scroll { border-radius: 12px 12px 0 0; }
 
-  .dock {
-    bottom: auto;
-    top: max(12px, env(safe-area-inset-top));
+  /* ② 语言切换：右上角轻钮 */
+  .lang {
+    top: max(11px, env(safe-area-inset-top));
     left: auto;
     right: 12px;
     transform: none;
-    width: min(300px, calc(100vw - 170px));
-    padding: 8px 12px 6px;
   }
-  .dock-presets { top: auto; bottom: -14px; }
-  .dock-preset { width: 26px; height: 26px; font-size: 13px; }
-  .dock-end { font-size: 11px; }
+  .lang-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(42, 36, 27, 0.12);
+  }
+  .lang-current { max-width: 84px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lang-menu { left: auto; right: 0; transform: none; }
+
+  /* ③ 底部滑杆：窄条常驻底边，无外凸铜钱 */
+  .dock {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    width: 100%;
+    padding: 9px 18px calc(9px + env(safe-area-inset-bottom));
+    border: none;
+    border-top: 1px solid var(--hairline);
+    outline: none;
+    border-radius: 0;
+    box-shadow: 0 -6px 20px rgba(42, 36, 27, 0.1);
+    z-index: 12;
+  }
+  .dock-presets { display: none; } /* 移动端去铜钱，滑杆即够 */
+  .dock-slider { margin-top: 0; gap: 12px; }
+  .dock-end { font-size: 10.5px; }
   .dock-caption { display: none; }
+
+  /* ④ 古今寻迹：与滑杆合为一块，自把手上方展开 */
+  .poi-panel {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: calc(34px + env(safe-area-inset-bottom)); /* 紧贴滑杆之上 */
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    transform: none !important; /* 覆盖桌面 translateX */
+    z-index: 11;
+  }
+  .poi-scroll {
+    border: 1px solid var(--hairline);
+    border-bottom: none;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -10px 30px rgba(42, 36, 27, 0.14);
+    max-height: 50dvh;
+    overflow-y: auto;
+    transition: max-height 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease;
+  }
+  .poi-panel.closed .poi-scroll {
+    max-height: 0;
+    opacity: 0;
+    border: none;
+    box-shadow: none;
+    overflow: hidden;
+  }
+  /* 把手：常驻于列表与滑杆之间 */
+  .poi-toggle {
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    padding: 10px 16px;
+    gap: 8px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--hairline);
+    border-bottom: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .poi-panel.closed .poi-toggle {
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -8px 24px rgba(42, 36, 27, 0.12);
+  }
+  .poi-toggle-text { writing-mode: horizontal-tb; letter-spacing: 0.22em; font-size: 13px; }
+  .poi-toggle-arrow { display: none; }
+  .poi-toggle::after {
+    content: '⌃';
+    font-size: 12px;
+    color: var(--cinnabar);
+  }
+  .poi-panel:not(.closed) .poi-toggle::after { content: '⌄'; }
+  /* 列表内标题与把手重复，移动端隐藏大标题，仅留副标题作上下文 */
+  .poi-header { position: static; padding: 12px 16px 8px; }
+  .poi-header h2 { display: none; }
+  .poi-header p { font-size: 11.5px; }
+
+  /* 地图缩放/定位控件：上移，避让底部面板 */
+  .maplibregl-ctrl-bottom-right { bottom: 96px; }
 
   .tang-label-ward { font-size: 11px; }
   .tang-label-palace { font-size: 16px; }
   .tang-label-market { font-size: 15px; }
 
   .kao-paper { padding: 30px 24px; }
-
-  /* 顶部一行已被题签与滑杆占据，语言切换器下移一行 */
-  .lang { top: 62px; }
-  .lang-btn { padding: 5px 11px; font-size: 12px; }
 }
