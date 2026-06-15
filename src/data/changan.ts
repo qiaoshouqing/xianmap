@@ -1039,9 +1039,9 @@ export const POIS: Poi[] = [
     },
   },
   {
-    id: 'gulou', nameZh: '鼓楼 · 回民街', lng: 108.93884, lat: 34.26177,
-    name: { 'zh-CN': '鼓楼 · 回民街', 'zh-TW': '鼓樓 · 回民街', en: 'Drum Tower · Muslim Quarter', ja: '鼓楼 · 回民街', ko: '고루 · 회민가' },
-    modern: { 'zh-CN': '北院门风情街', 'zh-TW': '北院門風情街', en: 'The Beiyuanmen food street', ja: '北院門の風情ある通り', ko: '베이위안먼 정취 거리' },
+    id: 'gulou', nameZh: '回民街 · 北院门', lng: 108.93896, lat: 34.26345,
+    name: { 'zh-CN': '回民街 · 北院门', 'zh-TW': '回民街 · 北院門', en: 'Muslim Quarter (Beiyuanmen)', ja: '回民街 · 北院門', ko: '회민가 · 베이위안먼' },
+    modern: { 'zh-CN': '鼓楼以北 · 回坊风情街', 'zh-TW': '鼓樓以北 · 回坊風情街', en: 'The food street north of the Drum Tower', ja: '鼓楼の北 · 回坊の風情ある通り', ko: '고루 북쪽 · 회방 정취 거리' },
     tangName: { 'zh-CN': '皇城 · 尚书省一带', 'zh-TW': '皇城 · 尚書省一帶', en: 'Imperial City · around the Department of State Affairs', ja: '皇城 · 尚書省あたり', ko: '황성 · 상서성 일대' },
     tang: {
       'zh-CN': '今日的烟火回坊，唐时是皇城衙署森严之地；胡商的后裔与胡食的香气，倒与西市一脉相承。',
