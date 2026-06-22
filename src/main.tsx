@@ -5,10 +5,18 @@ import {
 } from '@tanstack/react-router'
 import MapPage from './pages/MapPage'
 import KaoPage from './pages/KaoPage'
+import AnalyticsPageView from './components/AnalyticsPageView'
 import { LocaleProvider } from './i18n'
 import './index.css'
 
-const rootRoute = createRootRoute({ component: () => <Outlet /> })
+const rootRoute = createRootRoute({
+  component: () => (
+    <>
+      <AnalyticsPageView />
+      <Outlet />
+    </>
+  ),
+})
 const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: MapPage })
 const kaoRoute = createRoute({ getParentRoute: () => rootRoute, path: '/kao', component: KaoPage })
 
