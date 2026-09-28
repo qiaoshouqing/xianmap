@@ -62,7 +62,7 @@ npm run preview    # 本地预览构建产物
 | 构建 / 框架 | Vite + React 19 + TypeScript |
 | 路由 | [TanStack Router](https://tanstack.com/router)（`/` 舆图、`/kao` 舆图考） |
 | 地图引擎 | [MapLibre GL JS](https://maplibre.org/) |
-| 底图 | CARTO Voyager 栅格瓦片（基于 OpenStreetMap，WGS84） |
+| 底图 | OpenFreeMap Liberty 矢量瓦片（基于 OpenStreetMap，WGS84，免 API key） |
 | 唐城图层 | 运行时由 `src/data/changan.ts` 生成的 GeoJSON |
 
 ## 🧭 它是怎么"对齐"的
@@ -97,7 +97,7 @@ npm run deploy     # = npm run build && wrangler deploy
 
 ## 🇨🇳 部署到中国大陆的注意事项
 
-- 底图瓦片（`basemaps.cartocdn.com`）与 Google Fonts 在大陆访问可能较慢。若主要面向大陆用户：
+- 底图瓦片（`tiles.openfreemap.org`）与 Google Fonts 在大陆访问可能较慢。若主要面向大陆用户：
   1. 瓦片换为自托管或国内可达的 **WGS84** 源 —— **切勿**使用高德/百度瓦片，
      它们是 GCJ-02 / BD-09 加偏坐标，会与本图数据错位约 300–600 米；
   2. 字体（马善政体 / 站酷小薇 / 思源宋体）改为自托管 `woff2`。
@@ -127,12 +127,12 @@ src/
 代码以 [MIT](./LICENSE) 许可证开源。
 
 坊名、城建尺度等史料出自《长安志》《唐六典》等公有领域文献；
-底图数据 © [OpenStreetMap](https://www.openstreetmap.org/copyright) 贡献者，瓦片样式 © [CARTO](https://carto.com/)。
+底图数据 © [OpenStreetMap](https://www.openstreetmap.org/copyright) 贡献者，瓦片 © [OpenFreeMap](https://openfreemap.org/) / [OpenMapTiles](https://openmaptiles.org/)。
 
 ## 🙏 致谢
 
 - 宋·宋敏求《长安志》、《唐六典》及历代唐长安城考古复原研究；
-- [MapLibre](https://maplibre.org/)、[CARTO](https://carto.com/)、[OpenStreetMap](https://www.openstreetmap.org/) 社区；
+- [MapLibre](https://maplibre.org/)、[OpenFreeMap](https://openfreemap.org/)、[OpenStreetMap](https://www.openstreetmap.org/) 社区；
 - 灵感源自**陕西历史博物馆**的唐长安城叠层对照地图。
 
 <div align="center">

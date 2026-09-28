@@ -117,23 +117,9 @@ export default function MapView({ t, flyToPoi, onMapReady }: Props) {
       minZoom: 9.5,
       maxZoom: 17.5,
       attributionControl: false,
-      style: {
-        version: 8,
-        sources: {
-          carto: {
-            type: 'raster',
-            tiles: [
-              // Voyager：道路分色、街名地名齐全，仍足够柔和可叠绢层
-              'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-              'https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-              'https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-            ],
-            tileSize: 256,
-            attribution: '© OpenStreetMap contributors © CARTO',
-          },
-        },
-        layers: [{ id: 'base', type: 'raster', source: 'carto' }],
-      },
+      // OpenFreeMap 矢量底图：免 key、基于 OSM、WGS84。
+      // （CARTO 自 2026-09-23 起要求 API key，否则瓦片变成「API KEY REQUIRED」水印）
+      style: 'https://tiles.openfreemap.org/styles/liberty',
     })
     mapRef.current = map
     if (import.meta.env.DEV) {
@@ -151,6 +137,14 @@ export default function MapView({ t, flyToPoi, onMapReady }: Props) {
     map.addControl(geolocate, 'bottom-right')
 
     map.on('load', () => {
+      localizeBaseLabels(map, localeRef.current)
+      // 底图「纸幕」：唐图变浓时让现代底图退后（取代原栅格底图的 raster-opacity）
+      map.addSource('base-veil', {
+        type: 'geojson',
+        data: { type: 'Polygon', coordinates: [[[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]]] },
+      })
+      map.addLayer({ id: 'base-veil', type: 'fill', source: 'base-veil', paint: { 'fill-color': '#faf6ec', 'fill-opacity': 0 } })
+
       // ── 数据源 ──
       map.addSource('silk', { type: 'geojson', data: silkGeo })
       map.addSource('wards', { type: 'geojson', data: wardsGeo })
@@ -352,6 +346,12 @@ export default function MapView({ t, flyToPoi, onMapReady }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // 切换语言时同步底图地名
+  useEffect(() => {
+    const map = mapRef.current
+    if (map && map.getLayer('base-veil')) localizeBaseLabels(map, locale)
+  }, [locale])
+
   // 透明度联动（不依赖 isStyleLoaded——图块加载期间它会误报 false）
   useEffect(() => {
     tRef.current = t
@@ -386,5 +386,19 @@ function applyOpacity(map: maplibregl.Map, t: number) {
     if (type === 'circle') map.setPaintProperty(id, 'circle-stroke-opacity', max * tt)
   }
   // 唐图全开时，底图略微退后，避免文字打架
-  if (map.getLayer('base')) map.setPaintProperty('base', 'raster-opacity', 1 - 0.35 * tt)
+  if (map.getLayer('base-veil')) map.setPaintProperty('base-veil', 'fill-opacity', 0.35 * tt)
+}
+
+// 底图地名：中日韩界面显示当地名（汉字），英文界面显示英文/拼音
+function localizeBaseLabels(map: maplibregl.Map, locale: Locale) {
+  const field: maplibregl.ExpressionSpecification =
+    locale === 'en'
+      ? ['coalesce', ['get', 'name_en'], ['get', 'name:latin'], ['get', 'name']]
+      : ['coalesce', ['get', 'name:nonlatin'], ['get', 'name']]
+  for (const layer of map.getStyle().layers) {
+    if (layer.type !== 'symbol' || layer.id.startsWith('tang-')) continue
+    if (!map.getLayoutProperty(layer.id, 'text-field')) continue
+    if (/shield/.test(layer.id)) continue
+    map.setLayoutProperty(layer.id, 'text-field', field)
+  }
 }

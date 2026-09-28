@@ -69,7 +69,7 @@ npm run preview    # preview the production build locally
 | Build / framework | Vite + React 19 + TypeScript |
 | Routing | [TanStack Router](https://tanstack.com/router) (`/` map, `/kao` sources & notes) |
 | Map engine | [MapLibre GL JS](https://maplibre.org/) |
-| Basemap | CARTO Voyager raster tiles (OpenStreetMap-based, WGS84) |
+| Basemap | OpenFreeMap Liberty vector tiles (OpenStreetMap-based, WGS84, no API key) |
 | Tang city layer | GeoJSON generated at runtime from `src/data/changan.ts` |
 
 ## 🧭 How it lines up
@@ -113,7 +113,7 @@ use. To bind your own domain, uncomment and edit the relevant lines in `wrangler
 
 ## 🌏 Notes for serving users in mainland China
 
-- The basemap tiles (`basemaps.cartocdn.com`) and Google Fonts may be slow to reach from
+- The basemap tiles (`tiles.openfreemap.org`) and Google Fonts may be slow to reach from
   inside mainland China. If your audience is primarily there:
   1. Switch tiles to a self-hosted or domestically reachable **WGS84** source — **do not**
      use AMap/Baidu tiles, which use the offset GCJ-02 / BD-09 coordinate systems and will
@@ -147,13 +147,13 @@ Code is open-sourced under the [MIT License](./LICENSE).
 
 Ward names and city dimensions are drawn from public-domain texts such as the *Chang'an Zhi*
 and *Tang Liu Dian*. Basemap data © [OpenStreetMap](https://www.openstreetmap.org/copyright)
-contributors; tile style © [CARTO](https://carto.com/).
+contributors; tiles © [OpenFreeMap](https://openfreemap.org/) / [OpenMapTiles](https://openmaptiles.org/).
 
 ## 🙏 Acknowledgements
 
 - Song Minqiu's *Chang'an Zhi*, the *Tang Liu Dian*, and generations of archaeological
   reconstruction of Tang Chang'an;
-- The [MapLibre](https://maplibre.org/), [CARTO](https://carto.com/) and
+- The [MapLibre](https://maplibre.org/), [OpenFreeMap](https://openfreemap.org/) and
   [OpenStreetMap](https://www.openstreetmap.org/) communities;
 - Inspired by the layered Chang'an map at the **Shaanxi History Museum**.
 
