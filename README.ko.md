@@ -63,7 +63,7 @@ npm run preview    # 프로덕션 빌드를 로컬에서 미리보기
 | 빌드 / 프레임워크 | Vite + React 19 + TypeScript |
 | 라우팅 | [TanStack Router](https://tanstack.com/router)（`/` 지도, `/kao` 전거와 주석） |
 | 지도 엔진 | [MapLibre GL JS](https://maplibre.org/) |
-| 베이스맵 | CARTO Voyager 래스터 타일(OpenStreetMap 기반, WGS84) |
+| 베이스맵 | OpenFreeMap Liberty 벡터 타일(OpenStreetMap 기반, WGS84, API 키 불필요) |
 | 당성 레이어 | `src/data/changan.ts`에서 런타임에 생성되는 GeoJSON |
 
 ## 🧭 어떻게 「맞췄는가」
@@ -102,7 +102,7 @@ npm run deploy     # = npm run build && wrangler deploy
 
 ## 🌏 중국 본토 사용자 대상 참고 사항
 
-- 베이스맵 타일(`basemaps.cartocdn.com`)과 Google Fonts는 중국 본토에서 접속이 느릴 수 있습니다.
+- 베이스맵 타일(`tiles.openfreemap.org`)과 Google Fonts는 중국 본토에서 접속이 느릴 수 있습니다.
   주 사용자가 본토라면:
   1. 타일을 자체 호스팅하거나 국내에서 접근 가능한 **WGS84** 소스로 교체 —— AMap/Baidu 타일은
      **사용하지 마세요**. 이들은 편이 좌표계(GCJ-02 / BD-09)라 본 지도와 약 300~600m 어긋납니다;
@@ -133,12 +133,12 @@ Issue와 PR을 환영합니다: 방 이름/좌표 보정, 일화 추가, 베이�
 코드는 [MIT 라이선스](./LICENSE)로 공개됩니다.
 
 방 이름과 성곽 규모 등의 사료는 『장안지』『당육전』 등 퍼블릭 도메인 문헌에 근거합니다.
-베이스맵 데이터 © [OpenStreetMap](https://www.openstreetmap.org/copyright) 기여자, 타일 스타일 © [CARTO](https://carto.com/).
+베이스맵 데이터 © [OpenStreetMap](https://www.openstreetmap.org/copyright) 기여자, 타일 © [OpenFreeMap](https://openfreemap.org/) / [OpenMapTiles](https://openmaptiles.org/).
 
 ## 🙏 감사의 말
 
 - 송·송민구『장안지』,『당육전』, 그리고 역대 당 장안성의 고고학적 복원 연구;
-- [MapLibre](https://maplibre.org/), [CARTO](https://carto.com/), [OpenStreetMap](https://www.openstreetmap.org/) 커뮤니티;
+- [MapLibre](https://maplibre.org/), [OpenFreeMap](https://openfreemap.org/), [OpenStreetMap](https://www.openstreetmap.org/) 커뮤니티;
 - **산시성 역사박물관**의 당 장안성 겹침 대조 지도에서 영감을 받았습니다.
 
 <div align="center">

@@ -63,7 +63,7 @@ npm run preview    # 本番ビルドをローカルでプレビュー
 | ビルド / フレームワーク | Vite + React 19 + TypeScript |
 | ルーティング | [TanStack Router](https://tanstack.com/router)（`/` 地図、`/kao` 典拠と注） |
 | 地図エンジン | [MapLibre GL JS](https://maplibre.org/) |
-| ベースマップ | CARTO Voyager ラスタータイル（OpenStreetMap ベース、WGS84） |
+| ベースマップ | OpenFreeMap Liberty ベクタータイル（OpenStreetMap ベース、WGS84、API キー不要） |
 | 唐城レイヤー | `src/data/changan.ts` から実行時に生成される GeoJSON |
 
 ## 🧭 どうやって「重ねた」のか
@@ -100,7 +100,7 @@ npm run deploy     # = npm run build && wrangler deploy
 
 ## 🌏 中国本土のユーザー向けの注意
 
-- ベースマップのタイル（`basemaps.cartocdn.com`）と Google Fonts は中国本土からのアクセスが
+- ベースマップのタイル（`tiles.openfreemap.org`）と Google Fonts は中国本土からのアクセスが
   遅い場合があります。主な利用者が本土の場合：
   1. タイルを自己ホストまたは国内で到達可能な **WGS84** ソースに切り替える —— AMap／Baidu の
      タイルは**使用しないこと**。これらは偏移座標系（GCJ-02 / BD-09）で、本図と約 300〜600 m ずれます;
@@ -132,12 +132,12 @@ Issue と PR を歓迎します：坊名・座標の修正、逸話の追加、�
 
 坊名や城郭の規模などの史料は『長安志』『唐六典』などのパブリックドメイン文献に基づきます。
 ベースマップデータ © [OpenStreetMap](https://www.openstreetmap.org/copyright) コントリビューター、
-タイルスタイル © [CARTO](https://carto.com/)。
+タイル © [OpenFreeMap](https://openfreemap.org/) / [OpenMapTiles](https://openmaptiles.org/)。
 
 ## 🙏 謝辞
 
 - 宋・宋敏求『長安志』、『唐六典』、および歴代の唐長安城の考古学的復元研究;
-- [MapLibre](https://maplibre.org/)、[CARTO](https://carto.com/)、[OpenStreetMap](https://www.openstreetmap.org/) の各コミュニティ;
+- [MapLibre](https://maplibre.org/)、[OpenFreeMap](https://openfreemap.org/)、[OpenStreetMap](https://www.openstreetmap.org/) の各コミュニティ;
 - **陝西歴史博物館**の唐長安城・重ね合わせ地図に着想を得ました。
 
 <div align="center">
